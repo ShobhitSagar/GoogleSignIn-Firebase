@@ -1,5 +1,6 @@
 package com.shobhitsagar.googlesignin;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 1;
 
+    private ProgressDialog progressDialog;
+
     FirebaseAuth.AuthStateListener mAuthListner;
 
     @Override
@@ -38,9 +41,13 @@ public class MainActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListner);
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressDialog = new ProgressDialog(MainActivity.this);
 
         SignInButton google_Btn = (SignInButton) findViewById(R.id.googleBtn);
         google_Btn.setSize(SignInButton.SIZE_STANDARD);
@@ -51,10 +58,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
+                    progressDialog.dismiss();
                     startActivity(new Intent(MainActivity.this, SignedInActivity.class));
                 }
             }
         };
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -80,10 +90,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Sign In method
+
     private void signIn() {
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~onActivityResult
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -91,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+                progressDialog.dismiss();
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
@@ -102,7 +119,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~firebaseAuthWithGoogle
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+
+        progressDialog.setTitle("Signing In!");
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -110,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            progressDialog.dismiss();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
 //                            FirebaseUser user = mAuth.getCurrentUser();
