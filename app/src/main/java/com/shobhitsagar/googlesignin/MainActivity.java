@@ -2,6 +2,7 @@ package com.shobhitsagar.googlesignin;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
 
     private ProgressDialog progressDialog;
+    private boolean isUserClickedBackButton = false;
 
     FirebaseAuth.AuthStateListener mAuthListner;
 
@@ -149,5 +151,28 @@ public class MainActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isUserClickedBackButton) {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            isUserClickedBackButton = true;
+        } else {
+            super.onBackPressed();
+        }
+
+        new CountDownTimer(3000, 1000) {
+
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                isUserClickedBackButton = false;
+            }
+        }.start();
     }
 }
