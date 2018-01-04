@@ -1,2 +1,3 @@
 # GoogleSignIn-Firebase
-A simple google sign in android app example
+
+A simple google sign in using google's api.
