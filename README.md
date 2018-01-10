@@ -1,3 +1,3 @@
 # GoogleSignIn-Firebase
 
-A simple google sign in using google's api.
+Authenticate Using Firebase Google Sign-In on Android
