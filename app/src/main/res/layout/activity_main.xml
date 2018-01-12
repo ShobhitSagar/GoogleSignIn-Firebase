@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context="com.shobhitsagar.googlesignin.MainActivity">
 
     <com.google.android.gms.common.SignInButton
@@ -11,9 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="200dp">
 
     </com.google.android.gms.common.SignInButton>
 
